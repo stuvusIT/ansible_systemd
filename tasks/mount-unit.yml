@@ -21,6 +21,11 @@
     src: conf.j2
     dest: /etc/systemd/system/{{ filename }}
     owner: root
-    mode: 0640
+    mode: 0644 # Information about mount units is available through systemd's API anyway.
   notify:
     - Reload systemd configuration
+
+- name: Enable mount unit
+  systemd:
+    name: "{{ filename }}"
+    enabled: True
