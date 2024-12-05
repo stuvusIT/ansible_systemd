@@ -157,11 +157,14 @@ systemd_network_networks:
   `systemd-escape --suffix=mount --path {{ systemd_mounts['x'].Mount.Where }}`.
   Therefore the name of the key `x` itself doesn't have any effect.
 
-  Note that this role doesn't start/stop any mount units.
-  This role only handles creation of mount unit files.
+  Note that this role doesn't start/stop any mount units, but it enables them.
+  Note that enabling only has an effect when the unit has an installation config
+  (WantedBy=, RequiredBy=, Also=, Alias= settings in the [Install] section).
   To automatically mount a filesystem at boot, set
-  `systemd_mounts['x'].Unit.Before: local-fs.target` (or `remote-fs.target`
-  for remote filesystems).
+  `systemd_mounts['x'].Install.WantedBy: multi-user.target`.
+  In case it's a remote filesystem, you should also add
+  `systemd_mounts['x'].Mount.Options: _netdev`, which will instruct systemd to
+  add suitable dependencies.
 
 * A key `x` in `systemd_network_netdevs` causes an INI file
   `/etc/systemd/network/x.netdev` to be created.
