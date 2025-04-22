@@ -125,6 +125,20 @@
     enabled: True
     state: started
 
+- name: Check if NetworkManager exists
+  command: systemctl cat NetworkManager
+  failed_when: networkmanager_service_exists.rc not in [0, 1]
+  changed_when: False
+  register: networkmanager_service_exists
+
+- name: Disable NetworkManager
+  systemd:
+    name: NetworkManager
+    enabled: False
+    masked: True
+    state: stopped
+  when: networkmanager_service_exists.rc == 0
+
 - name: Check if legacy networking exists
   command: systemctl cat networking
   failed_when: networking_service_exists.rc not in [0, 1]
