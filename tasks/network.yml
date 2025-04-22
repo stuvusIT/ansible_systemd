@@ -139,7 +139,7 @@
     state: stopped
   when: networkmanager_service_exists.rc == 0
 
-- name: Check if NetworkManager exists
+- name: Check if legacy networking exists
   command: systemctl cat networking
   failed_when: networking_service_exists.rc not in [0, 1]
   changed_when: False
