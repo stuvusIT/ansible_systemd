@@ -11,3 +11,5 @@
   tags: [systemd-resolve]
 - include_tasks: mounts.yml
   tags: [systemd-mounts]
+- include_tasks: smartmon.yml
+  tags: [smartmon]
