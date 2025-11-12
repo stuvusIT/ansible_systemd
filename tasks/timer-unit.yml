@@ -25,7 +25,7 @@
   notify:
     - Reload systemd configuration
 
-- name: Enable timer unit
-  systemd:
-    name: "{{ filename }}"
-    enabled: True
+#- name: Enable timer unit
+#  systemd:
+#    name: "{{ filename }}"
+#    enabled: True
