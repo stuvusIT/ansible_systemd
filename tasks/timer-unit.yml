@@ -1,0 +1,31 @@
+- name: Obtain timer unit filename
+  command:
+    argv:
+      - systemd-escape
+      - --suffix=timer
+      - --path
+      - "{{ conf.key }}"
+  changed_when: False
+  register: systemd_timer_unit_file_name
+
+- set_fact:
+    filename: "{{ systemd_timer_unit_file_name.stdout | trim }}"
+
+- name: Add filename to list of wanted timer units
+  set_fact:
+    systemd_timer_wanted_timer_unit_filenames: >-
+      {{ systemd_timer_wanted_timer_unit_filenames + [filename] }}
+
+- name: Instantiate timer unit
+  template:
+    src: conf.j2
+    dest: /etc/systemd/system/{{ filename }}
+    owner: root
+    mode: 0644 # Information about timer units is available through systemd's API anyway.
+  notify:
+    - Reload systemd configuration
+
+- name: Enable timer unit
+  systemd:
+    name: "{{ filename }}"
+    enabled: True

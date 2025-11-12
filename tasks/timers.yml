@@ -1,0 +1,37 @@
+---
+- name: Initialize list of wanted timer units
+  set_fact:
+    systemd_timer_wanted_timer_unit_filenames: []
+
+- name: Instantiate timer units
+  include_tasks: timer-unit.yml
+  loop: "{{ systemd_timer | combine | dict2items }}"
+  loop_control:
+    loop_var: conf
+    label: "{{ conf.key }}"
+
+- name: Capture unwanted timer units
+  find:
+    paths:
+      - /etc/systemd/system/
+    patterns:
+      - "*.timer"
+    excludes: "{{ systemd_timer_wanted_timer_unit_filenames }}"
+  register: systemd_timer_unwanted_timer_unit_files
+
+- name: Delete unwanted timer units
+  file:
+    state: absent
+    path: "{{ path }}"
+  notify:
+    - Reload systemd configuration
+  loop: >-
+    {{
+      (
+        systemd_timer_unwanted_timer_unit_files.files
+      ) | map(attribute='path')
+    }}
+  loop_control:
+    loop_var: path
+
+- meta: flush_handlers

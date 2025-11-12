@@ -15,8 +15,3 @@
     name: systemd-resolved
     enabled: True
     state: restarted
-
-- name: Restart smartmon timer
-  service:
-    name: smartmon.timer
-    state: restarted
