@@ -5,7 +5,7 @@
 
 - name: Instantiate timer units
   include_tasks: timer-unit.yml
-  loop: "{{ systemd_timer | combine | dict2items }}"
+  loop: "{{ systemd_timers | combine | dict2items }}"
   loop_control:
     loop_var: conf
     label: "{{ conf.key }}"
